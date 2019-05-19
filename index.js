@@ -10,7 +10,7 @@ window.onload = function() {
     let grid = to_cordinate(i);
     table_elements[i].addEventListener("click", function(){
       let stone_color = check_color(order);
-      if (horizontal_check(grid, table_matrix, stone_color)) {
+      if (vertical_check(grid, table_matrix, stone_color) || horizontal_check(grid, matrix, stone_color)) {
         putstone(grid, table_matrix, stone_color);
       } else {
         console.log('eroor');
@@ -57,10 +57,35 @@ window.onload = function() {
     };
   }
 
-  function vertical_check(grid, matrix){
+  function vertical_check(grid, matrix, stone_color){
     const x = grid.x
     const y = grid.y
 
+    let new_matrix = transpose(matrix)
+    let same_column = new_matrix[x]
+
+
+    if (stone_color === black) {
+      if (check_next_up_white_stone(y, same_column) || check_next_down_white_stone(y, same_column)) {
+        if (up_check(same_column, y, stone_color) || down_check(same_column, y, stone_color)) {
+          return true;
+        } else {
+          return false;
+        };
+      } else {
+        return false;
+      };
+    } else if(stone_color === white) {
+      if (check_next_up_black_stone(y, same_column) || check_next_down_black_stone(y, same_column)) {
+        if (up_check(same_column, y, stone_color) || down_check(same_column, y, stone_color)) {
+          return true;
+        } else {
+          return false;
+        };
+      } else {
+        return false;
+      };
+    };
 
   }
 
@@ -174,4 +199,9 @@ window.onload = function() {
     };
   }
 
+  function transpose(a) {
+    return Object.keys(a[0]).map(function(c) {
+        return a.map(function(r) { return r[c]; });
+    });
+  }
 };
