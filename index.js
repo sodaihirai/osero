@@ -10,14 +10,13 @@ window.onload = function() {
     let grid = to_cordinate(i);
     table_elements[i].addEventListener("click", function(){
       let stone_color = check_color(order);
-      if (horizontal_check(grid, table_matrix, stone_color)) {
+      if (before_check_for_put(grid, table_matrix, stone_color)) {
         console.log('eroor');
       } else {
         putstone(grid, table_matrix, stone_color);
       };
     })
   }
-
 
   function putstone(grid, matrix, color) {
     const x = grid.x
@@ -101,6 +100,7 @@ window.onload = function() {
     let first_same_color = false;
     let out_of_board = false;
     let empty_grid = false;
+    let global_order = 1;
 
     for(let i = x-1, n = y-1, order = 1; i >= -1 && n >= -1; i--, n--, order++) {
       if (i === -1 || n === -1) {
@@ -108,28 +108,30 @@ window.onload = function() {
         break;
       } else {
         if(stone_color === black) {
-          if(matrix[i][n].innerHTML === black) {
+          if(matrix[n][i].innerHTML === black) {
             if(order === 1) {
               first_same_color = true;
               break;
             } else {
               break;
             }
-          } else if(matrix[i][n].innerHTML === white) {
+          } else if(matrix[n][i].innerHTML === white) {
+            global_order++;
             continue;
           } else {
             empty_grid = true;
             break;
           };
         } else if(stone_color === white) {
-          if(matrix[i][n].innerHTML === white) {
+          if(matrix[n][i].innerHTML === white) {
             if(order === 1) {
               first_same_color = true;
               break;
             } else {
               break;
             }
-          } else if(matrix[i][n].innerHTML === black) {
+          } else if(matrix[n][i].innerHTML === black) {
+            global_order++;
             continue;
           } else {
             empty_grid = true;
@@ -141,6 +143,13 @@ window.onload = function() {
     if (first_same_color || out_of_board || empty_grid) {
       return true;
     } else {
+      for(let i = 1; i <= global_order; i++) {
+        if(stone_color === black) {
+          matrix[y - i][x - i].innerHTML = black; 
+        } else {
+          matrix[y - i][x - i].innerHTML = white;
+        };
+      };
       return false;
     }
   }
@@ -152,6 +161,7 @@ window.onload = function() {
     let first_same_color = false;
     let out_of_board = false;
     let empty_grid = false;
+    let global_order = 0;
 
     for(let i = x+1, n = y-1, order = 1; i <= 8 && n >= -1; i++, n--, order++) {
       if(i === 8 || n === -1) {
@@ -159,28 +169,30 @@ window.onload = function() {
         break;
       } else {
         if(stone_color === black) {
-          if(matrix[i][n].innerHTML === black) {
+          if(matrix[n][i].innerHTML === black) {
             if(order === 1) {
               first_same_color = true;
               break;
             } else {
               break;
             }
-          } else if(matrix[i][n].innerHTML === white) {
+          } else if(matrix[n][i].innerHTML === white) {
+            global_order++;
             continue;
           } else {
             empty_grid = true;
             break;
           };
         } else if(stone_color === white) {
-          if(matrix[i][n].innerHTML === white) {
+          if(matrix[n][i].innerHTML === white) {
             if(order === 1) {
               first_same_color = true;
               break;
             } else {
               break;
             }
-          } else if(matrix[i][n].innerHTML === black) {
+          } else if(matrix[n][i].innerHTML === black) {
+            global_order++;
             continue;
           } else {
             empty_grid = true;
@@ -192,6 +204,13 @@ window.onload = function() {
     if (first_same_color || out_of_board || empty_grid) {
       return true;
     } else {
+      for(let i = 1; i <= global_order; i++) {
+        if(stone_color === black) {
+          matrix[y - i][x + i].innerHTML = black; 
+        } else {
+          matrix[y - i][x + i].innerHTML = white;
+        };
+      };
       return false;
     };
   }
@@ -203,6 +222,7 @@ window.onload = function() {
     let first_same_color = false;
     let out_of_board = false;
     let empty_grid = false;
+    let global_order = 0;
 
     for(let i = x-1, n = y+1, order = 1; i >= -1 && n <= 8; i--, n++, order++) {
       if (i === -1 || n === 8) {
@@ -210,28 +230,30 @@ window.onload = function() {
         break;
       } else {
         if(stone_color === black) {
-          if(matrix[i][n].innerHTML === black) {
+          if(matrix[n][i].innerHTML === black) {
             if(order === 1) {
               first_same_color = true;
               break;
             } else {
               break;
             }
-          } else if(matrix[i][n].innerHTML === white) {
+          } else if(matrix[n][i].innerHTML === white) {
+            global_order++;
             continue;
           } else {
             empty_grid = true;
             break;
           };
         } else if(stone_color === white) {
-          if(matrix[i][n].innerHTML === white) {
+          if(matrix[n][i].innerHTML === white) {
             if(order === 1) {
               first_same_color = true;
               break;
             } else {
               break;
             }
-          } else if(matrix[i][n].innerHTML === black) {
+          } else if(matrix[n][i].innerHTML === black) {
+            global_order++;
             continue;
           } else {
             empty_grid = true;
@@ -243,6 +265,13 @@ window.onload = function() {
     if (first_same_color || out_of_board || empty_grid) {
       return true;
     } else {
+      for(let i = 1; i <= global_order; i++) {
+        if(stone_color === black) {
+          matrix[y + i][x - i].innerHTML = black; 
+        } else {
+          matrix[y + i][x - i].innerHTML = white;
+        };
+      };
       return false;
     };
   }
@@ -254,6 +283,7 @@ window.onload = function() {
     let first_same_color = false;
     let out_of_board = false;
     let empty_grid = false;
+    let global_order = 0;
 
     for(let i = x+1, n = y+1, order = 1; i <= 8 && n <= 8; i++, n++, order++) {
       if (i === 8 || n === 8) {
@@ -261,34 +291,31 @@ window.onload = function() {
         break;
       } else {
         if(stone_color === black) {
-          if(matrix[i][n].innerHTML === black) {
+          if(matrix[n][i].innerHTML === black) {
             if(order === 1) {
               first_same_color = true;
               break;
             } else {
               break;
             }
-          } else if(matrix[i][n].innerHTML === white) {
+          } else if(matrix[n][i].innerHTML === white) {
+            global_order++;
             continue;
           } else {
             empty_grid = true;
             break;
           };
         } else if(stone_color === white) {
-          if(matrix[i][n].innerHTML === white) {
+          if(matrix[n][i].innerHTML === white) {
             if(order === 1) {
               first_same_color = true;
               break;
             } else {
               break;
             }
-          } else if(matrix[i][n].innerHTML === black) {
-            if(i === 8 || n === 8){
-              last_diff_color = true;
-              break;
-            } else {
-              continue;
-            }
+          } else if(matrix[n][i].innerHTML === black) {
+            global_order++;
+            continue;
           } else {
             empty_grid = true;
             break;
@@ -299,6 +326,13 @@ window.onload = function() {
     if (first_same_color || out_of_board || empty_grid) {
       return true;
     } else {
+      for(let i = 1; i <= global_order; i++) {
+        if(stone_color === black) {
+          matrix[y + i][x + i].innerHTML = black; 
+        } else {
+          matrix[y + i][x + i].innerHTML = white;
+        };
+      };
       return false;
     };
   }
@@ -308,6 +342,7 @@ window.onload = function() {
     let first_same_color = false;
     let empty_grid = false;
     let out_of_board = false;
+    let global_order = 0;
     for(let i = x+1, order = 1; i <= 8; i++, order++) {
       if (i === 8) {
         out_of_board = true;
@@ -322,6 +357,7 @@ window.onload = function() {
               break;
             };
           } else if(row[i].innerHTML === white){
+            global_order++;
             continue;
           } else {
             empty_grid = true;
@@ -336,6 +372,7 @@ window.onload = function() {
               break;
             };
           } else if(row[i].innerHTML === black){
+            global_order++;
             continue;
           } else {
             empty_grid = true;
@@ -347,6 +384,13 @@ window.onload = function() {
     if (first_same_color || out_of_board || empty_grid) {
       return true;
     } else {
+      for(let i = 1; i <= global_order; i++) {
+        if(stone_color === black){
+          row[x + i].innerHTML = black;
+        } else {
+          row[x + i].innerHTML = white;
+        }
+      }; 
       return false;
     };
   }
@@ -355,7 +399,7 @@ window.onload = function() {
     let first_same_color = false;
     let empty_grid = false;
     let out_of_board = false;
-    let global_order = 1
+    let global_order = 0
     for(let i = x-1, order = 1; i >= -1; i--, order++) {
       if (i === -1) {
         out_of_board = true;
@@ -399,7 +443,7 @@ window.onload = function() {
     if (first_same_color || out_of_board || empty_grid) {
       return true;
     } else {
-      for(let i = 1; i < global_order; i++) {
+      for(let i = 1; i <= global_order; i++) {
         if(stone_color === black){
           row[x - i].innerHTML = black;
         } else {
