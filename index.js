@@ -10,13 +10,14 @@ window.onload = function() {
     let grid = to_cordinate(i);
     table_elements[i].addEventListener("click", function(){
       let stone_color = check_color(order);
-      if (vertical_check(grid, table_matrix, stone_color) || horizontal_check(grid, matrix, stone_color)) {
-        putstone(grid, table_matrix, stone_color);
-      } else {
+      if (horizontal_check(grid, table_matrix, stone_color)) {
         console.log('eroor');
+      } else {
+        putstone(grid, table_matrix, stone_color);
       };
     })
   }
+
 
   function putstone(grid, matrix, color) {
     const x = grid.x
@@ -51,9 +52,9 @@ window.onload = function() {
 
   function before_check_for_put(grid, matrix, stone_color) {
     if(vertical_check(grid, matrix, stone_color) && horizontal_check(grid, matrix, stone_color) && diagonal_check(grid, matrix, stone_color)) {
-      true
+      return true
     } else {
-      false
+      return false
     };
   }
 
@@ -64,27 +65,10 @@ window.onload = function() {
     let new_matrix = transpose(matrix)
     let same_column = new_matrix[x]
 
-
-    if (stone_color === black) {
-      if (check_next_up_white_stone(y, same_column) || check_next_down_white_stone(y, same_column)) {
-        if (up_check(same_column, y, stone_color) || down_check(same_column, y, stone_color)) {
-          return true;
-        } else {
-          return false;
-        };
-      } else {
-        return false;
-      };
-    } else if(stone_color === white) {
-      if (check_next_up_black_stone(y, same_column) || check_next_down_black_stone(y, same_column)) {
-        if (up_check(same_column, y, stone_color) || down_check(same_column, y, stone_color)) {
-          return true;
-        } else {
-          return false;
-        };
-      } else {
-        return false;
-      };
+    if(up_check(same_column, y, stone_color) && down_check(same_column, y, stone_color)) {
+      return true;
+    } else {
+      return false;
     };
 
   }
@@ -95,49 +79,274 @@ window.onload = function() {
 
     let same_row = matrix[y]
 
-    if (stone_color === black) {
-      if (check_next_up_white_stone(x, same_row) || check_next_down_white_stone(x, same_row)) {
-        if (up_check(same_row, x, stone_color) || down_check(same_row, x, stone_color)) {
-          return true;
-        } else {
-          return false;
-        };
-      } else {
-        return false;
-      };
-    } else if(stone_color === white) {
-      if (check_next_up_black_stone(x, same_row) || check_next_down_black_stone(x, same_row)) {
-        if (up_check(same_row, x, stone_color) || down_check(same_row, x, stone_color)) {
-          return true;
-        } else {
-          return false;
-        };
-      } else {
-        return false;
-      };
+    if(up_check(same_row, x, stone_color) && down_check(same_row, x, stone_color)) {
+      return true;
+    } else {
+      return false;
     };
   }
 
-  function diagonal_check(grid, matrix){
+  function diagonal_check(grid, matrix, stone_color){
+    if(up_left_check(grid, matrix, stone_color) && up_right_check(grid, matrix, stone_color) && down_left_check(grid, matrix, stone_color) && down_right_check(grid, matrix, stone_color)) {
+      return true;
+    } else {
+      return false;
+    };
   }
 
-  function up_check(row, x, stone_color) {
-    if(x < 6) {
-      for(let i = x+2; i < 8; i++) {
+  function up_left_check(grid, matrix, stone_color){
+    const x = grid.x
+    const y = grid.y 
+
+    let first_same_color = false;
+    let out_of_board = false;
+    let empty_grid = false;
+
+    for(let i = x-1, n = y-1, order = 0; i >= -1 && n >= -1; i--, n--, order++) {
+      if (i === -1 || n === -1) {
+        out_of_board = true;
+        break;
+      } else {
         if(stone_color === black) {
-          if(row[i] === black) {
-            break;
-          } else if(row[i] === white && i !== 7){
+          if(matrix[i][n].innerHTML === black) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            }
+          } else if(matrix[i][n].innerHTML === white) {
             continue;
+          } else {
+            empty_grid = true;
+            break;
           };
         } else if(stone_color === white) {
-          if(row[i] === white) {
-            break;
-          } else if(row[i] === black && i !== 0){
+          if(matrix[i][n].innerHTML === white) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            }
+          } else if(matrix[i][n].innerHTML === black) {
             continue;
+          } else {
+            empty_grid = true;
+            break;
+          };
+        }
+      }
+    };
+    if (first_same_color || out_of_board || empty_grid) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function up_right_check(grid, matrix, stone_color){
+    const x = grid.x
+    const y = grid.y 
+
+    let first_same_color = false;
+    let out_of_board = false;
+    let empty_grid = false;
+
+    for(let i = x+1, n = y-1, order = 0; i <= 8 && n >= -1; i++, n--, order++) {
+      if(i === 8 || n === -1) {
+        out_of_board = true;
+        break;
+      } else {
+        if(stone_color === black) {
+          if(matrix[i][n].innerHTML === black) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            }
+          } else if(matrix[i][n].innerHTML === white) {
+            continue;
+          } else {
+            empty_grid = true;
+            break;
+          };
+        } else if(stone_color === white) {
+          if(matrix[i][n].innerHTML === white) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            }
+          } else if(matrix[i][n].innerHTML === black) {
+            continue;
+          } else {
+            empty_grid = true;
+            break;
+          };
+        }
+      };
+      }
+    if (first_same_color || out_of_board || empty_grid) {
+      return true;
+    } else {
+      return false;
+    };
+  }
+
+  function down_left_check(grid, matrix, stone_color){
+    const x = grid.x
+    const y = grid.y 
+
+    let first_same_color = false;
+    let out_of_board = false;
+    let empty_grid = false;
+
+    for(let i = x-1, n = y+1, order = 0; i >= -1 && n <= 8; i--, n++, order++) {
+      if (i === -1 || n === 8) {
+        out_of_board = true;
+        break;
+      } else {
+        if(stone_color === black) {
+          if(matrix[i][n].innerHTML === black) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            }
+          } else if(matrix[i][n].innerHTML === white) {
+            continue;
+          } else {
+            empty_grid = true;
+            break;
+          };
+        } else if(stone_color === white) {
+          if(matrix[i][n].innerHTML === white) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            }
+          } else if(matrix[i][n].innerHTML === black) {
+            continue;
+          } else {
+            empty_grid = true;
+            break;
           };
         };
       };
+    };
+    if (first_same_color || out_of_board || empty_grid) {
+      return true;
+    } else {
+      return false;
+    };
+  }
+
+  function down_right_check(grid, matrix, stone_color){
+    const x = grid.x
+    const y = grid.y 
+
+    let first_same_color = false;
+    let out_of_board = false;
+    let empty_grid = false;
+
+    for(let i = x+1, n = y+1, order = 0; i <= 8 && n <= 8; i++, n++, order++) {
+      if (i === 8 || n === 8) {
+        out_of_board = true;
+        break;
+      } else {
+        if(stone_color === black) {
+          if(matrix[i][n].innerHTML === black) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            }
+          } else if(matrix[i][n].innerHTML === white) {
+            continue;
+          } else {
+            empty_grid = true;
+            break;
+          };
+        } else if(stone_color === white) {
+          if(matrix[i][n].innerHTML === white) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            }
+          } else if(matrix[i][n].innerHTML === black) {
+            if(i === 8 || n === 8){
+              last_diff_color = true;
+              break;
+            } else {
+              continue;
+            }
+          } else {
+            empty_grid = true;
+            break;
+          };
+        };
+      };
+    };
+    if (first_same_color || out_of_board || empty_grid) {
+      return true;
+    } else {
+      return false;
+    };
+  }
+
+
+  function up_check(row, x, stone_color) {
+    let first_same_color = false;
+    let empty_grid = false;
+    let out_of_board = false;
+    for(let i = x+1, order = 0; i <= 8; i++, order++) {
+      if (i === 8) {
+        out_of_board = true;
+        break;
+      } else {
+        if(stone_color === black) {
+          if(row[i].innerHTML === black) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            };
+          } else if(row[i].innerHTML === white){
+            row[i].innerHTML = white;
+            continue;
+          } else {
+            empty_grid = true;
+            break;
+          };
+        } else if(stone_color === white) {
+          if(row[i].innerHTML === white) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            };
+          } else if(row[i].innerHTML === black){
+            row[i].innerHTML = black;
+            continue;
+          } else {
+            empty_grid = true;
+            break;
+          };
+        };  
+      };
+    };
+    if (first_same_color || out_of_board || empty_grid) {
       return true;
     } else {
       return false;
@@ -145,55 +354,47 @@ window.onload = function() {
   }
 
   function down_check(row, x, stone_color) {
-    if(x > 1) {
-      for(let i = x-2; i > -1; i--) {
+    let first_same_color = false;
+    let empty_grid = false;
+    let out_of_board = false;    
+    for(let i = x-1, order = 0; i >= -1; i--, order++) {
+      if (i === -1) {
+        out_of_board = true;
+        break;
+      } else {
         if(stone_color === black) {
-          if(row[i] === black) {
-            break;
-          } else if(row[i] === white){
+          if(row[i].innerHTML === black) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            };
+          } else if(row[i].innerHTML === white){
             continue;
+          } else {
+            empty_grid = true;
+            break;
           };
         } else if(stone_color === white) {
-          if(row[i] === white) {
-            break;
-          } else if(row[i] === black){
+          if(row[i].innerHTML === white) {
+            if(order === 0) {
+              first_same_color = true;
+              break;
+            } else {
+              break;
+            };
+          } else if(row[i].innerHTML === black){
             continue;
+          } else {
+            empty_grid = true;
+            break;
           };
         };
       };
+    };
+    if (first_same_color || out_of_board || empty_grid) {
       return true;
-    } else {
-      return false;
-    };
-  }
-
-  function check_next_up_white_stone(x, row) {
-    if(x !== 7) {
-      return row[x+1].innerHTML === white;
-    } else {
-      return false;
-    };
-  }
-
-  function check_next_down_white_stone(x, row) {
-    if(x !== 0){
-      return row[x-1].innerHTML === white;
-    } else {
-      return false;
-    };
-  }
-
-  function check_next_up_black_stone(x, row) {
-    if(x !== 7) {
-      return row[x+1].innerHTML === black;
-    } else {
-      return false;
-    };
-  }
-
-  function check_next_down_black_stone(x, row) {
-    if(x !== 0){
-      return row[x-1].innerHTML === black;
     } else {
       return false;
     };
