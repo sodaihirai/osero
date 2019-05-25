@@ -2,7 +2,9 @@ window.onload = function() {
   const black = "●"
   const white = "◯"
   const squ = 8
+  let turn_check_count = 0
   let order = 0
+
 
   let table_elements = document.getElementsByTagName("td");
   let table_matrix = to_matrix(table_elements);
@@ -10,10 +12,12 @@ window.onload = function() {
     let grid = to_cordinate(i);
     table_elements[i].addEventListener("click", function(){
       let stone_color = check_color(order);
-      if (before_check_for_put(grid, table_matrix, stone_color)) {
-        console.log('eroor');
-      } else {
+      before_check_for_put(grid, table_matrix, stone_color);
+      if (turn_check_count > 0) {
         putstone(grid, table_matrix, stone_color);
+        turn_check_count = 0;
+      } else {
+        console.log('eroor');
       };
     })
   }
@@ -50,11 +54,9 @@ window.onload = function() {
   }
 
   function before_check_for_put(grid, matrix, stone_color) {
-    if(vertical_check(grid, matrix, stone_color) && horizontal_check(grid, matrix, stone_color) && diagonal_check(grid, matrix, stone_color)) {
-      return true
-    } else {
-      return false
-    };
+    vertical_check(grid, matrix, stone_color);
+    horizontal_check(grid, matrix, stone_color);
+    diagonal_check(grid, matrix, stone_color);
   }
 
   function vertical_check(grid, matrix, stone_color){
@@ -64,12 +66,8 @@ window.onload = function() {
     let new_matrix = transpose(matrix)
     let same_column = new_matrix[x]
 
-    if(up_check(same_column, y, stone_color) && down_check(same_column, y, stone_color)) {
-      return true;
-    } else {
-      return false;
-    };
-
+    up_check(same_column, y, stone_color);
+    down_check(same_column, y, stone_color);
   }
 
   function horizontal_check(grid, matrix, stone_color){
@@ -78,19 +76,15 @@ window.onload = function() {
 
     let same_row = matrix[y]
 
-    if(up_check(same_row, x, stone_color) && down_check(same_row, x, stone_color)) {
-      return true;
-    } else {
-      return false;
-    };
+    up_check(same_row, x, stone_color);
+    down_check(same_row, x, stone_color);
   }
 
   function diagonal_check(grid, matrix, stone_color){
-    if(up_left_check(grid, matrix, stone_color) && up_right_check(grid, matrix, stone_color) && down_left_check(grid, matrix, stone_color) && down_right_check(grid, matrix, stone_color)) {
-      return true;
-    } else {
-      return false;
-    };
+    up_left_check(grid, matrix, stone_color);
+    up_right_check(grid, matrix, stone_color);
+    down_left_check(grid, matrix, stone_color);
+    down_right_check(grid, matrix, stone_color);
   }
 
   function up_left_check(grid, matrix, stone_color){
@@ -140,9 +134,7 @@ window.onload = function() {
         }
       }
     };
-    if (first_same_color || out_of_board || empty_grid) {
-      return true;
-    } else {
+    if (!first_same_color && !out_of_board && !empty_grid) {
       for(let i = 1; i <= global_order; i++) {
         if(stone_color === black) {
           matrix[y - i][x - i].innerHTML = black; 
@@ -150,8 +142,8 @@ window.onload = function() {
           matrix[y - i][x - i].innerHTML = white;
         };
       };
-      return false;
-    }
+      turn_check_count++;
+    };
   }
 
   function up_right_check(grid, matrix, stone_color){
@@ -201,9 +193,7 @@ window.onload = function() {
         }
       };
       }
-    if (first_same_color || out_of_board || empty_grid) {
-      return true;
-    } else {
+    if (!first_same_color && !out_of_board && !empty_grid) {
       for(let i = 1; i <= global_order; i++) {
         if(stone_color === black) {
           matrix[y - i][x + i].innerHTML = black; 
@@ -211,7 +201,7 @@ window.onload = function() {
           matrix[y - i][x + i].innerHTML = white;
         };
       };
-      return false;
+      turn_check_count++;
     };
   }
 
@@ -262,9 +252,7 @@ window.onload = function() {
         };
       };
     };
-    if (first_same_color || out_of_board || empty_grid) {
-      return true;
-    } else {
+    if (!first_same_color && !out_of_board && !empty_grid) {
       for(let i = 1; i <= global_order; i++) {
         if(stone_color === black) {
           matrix[y + i][x - i].innerHTML = black; 
@@ -272,7 +260,7 @@ window.onload = function() {
           matrix[y + i][x - i].innerHTML = white;
         };
       };
-      return false;
+      turn_check_count++;
     };
   }
 
@@ -323,9 +311,7 @@ window.onload = function() {
         };
       };
     };
-    if (first_same_color || out_of_board || empty_grid) {
-      return true;
-    } else {
+    if (!first_same_color && !out_of_board && !empty_grid) {
       for(let i = 1; i <= global_order; i++) {
         if(stone_color === black) {
           matrix[y + i][x + i].innerHTML = black; 
@@ -333,7 +319,7 @@ window.onload = function() {
           matrix[y + i][x + i].innerHTML = white;
         };
       };
-      return false;
+      turn_check_count++;
     };
   }
 
@@ -381,9 +367,7 @@ window.onload = function() {
         };  
       };
     };
-    if (first_same_color || out_of_board || empty_grid) {
-      return true;
-    } else {
+    if (!first_same_color && !out_of_board && !empty_grid) {
       for(let i = 1; i <= global_order; i++) {
         if(stone_color === black){
           row[x + i].innerHTML = black;
@@ -391,7 +375,7 @@ window.onload = function() {
           row[x + i].innerHTML = white;
         }
       }; 
-      return false;
+      turn_check_count++;
     };
   }
 
@@ -440,17 +424,15 @@ window.onload = function() {
         };
       };
     };
-    if (first_same_color || out_of_board || empty_grid) {
-      return true;
-    } else {
+    if (!first_same_color && !out_of_board && !empty_grid) {
       for(let i = 1; i <= global_order; i++) {
         if(stone_color === black){
           row[x - i].innerHTML = black;
         } else {
           row[x - i].innerHTML = white;
         }
-      }
-      return false;
+      };
+      turn_check_count++;
     };
   }
 
