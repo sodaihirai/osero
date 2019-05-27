@@ -13,7 +13,7 @@ window.onload = function() {
     table_elements[i].addEventListener("click", function(){
       let stone_color = check_color(order);
       before_check_for_put(grid, table_matrix, stone_color);
-      if (turn_check_count > 0) {
+      if (turn_check_count > 0 && stone_check(grid, table_matrix)) {
         putstone(grid, table_matrix, stone_color);
         turn_check_count = 0;
       } else {
@@ -68,6 +68,17 @@ window.onload = function() {
 
     up_check(same_column, y, stone_color);
     down_check(same_column, y, stone_color);
+  }
+
+  function stone_check(grid, matrix){
+    const x = grid.x
+    const y = grid.y
+
+    if (matrix[y][x].innerHTML === black || white) {
+      return true;
+    } else {
+      return false;
+    };
   }
 
   function horizontal_check(grid, matrix, stone_color){
