@@ -105,6 +105,9 @@ window.onload = function() {
     isSameColor(square) {
       square.innerHTML === white;
     }
+    turnStone(square) {
+      square.innerHTML = white;
+    }
   }
 
   class BlackStone {
@@ -114,18 +117,53 @@ window.onload = function() {
     isSameColor(square) {
       square.innerHTML === black;
     }
+    turnStone(square) {
+      square.innerHTML = black;
+    }
+  }
+
+  function isApprovedToTurn(firstSameColor, outOfBoard, emptyGrid) {
+    return !firstSameColor && !outOfBoard && !emptyGrid
+  }
+  
+  function getSquareByDirection(direction, row = null) {
+    switch (direction) {
+      case 'upLeft':
+        return matrix[y-i][x-i];
+      case 'upRight':
+        return matrix[y-i][x+i];
+      case 'downLeft':
+        return matrix[y+i][x-i];
+      case 'downRight':
+        return matrix[y+i][x+i];
+      case 'up':
+        return row[x + i];
+      case 'down':
+        return row[x - i];
+    }
+  }
+
+  function turnStone(approval, globalOrder, direction, row = null) {
+    const stone = stoneColor === white ? new WhiteStone() : new BlackStone();
+    if (approval) {
+      for(let i = 1; i <= globalOrder; i++) {
+        let square = getSquareByDirection(direction, row);
+        stone.turnStone(square);
+      }
+      turnCheckCount++;
+    }
   }
 
   function upLeftCheck(grid, matrix, stoneColor){
-    const x = grid.x
-    const y = grid.y 
+    const x = grid.x;
+    const y = grid.y;
 
     let firstSameColor = false;
     let outOfBoard = false;
     let emptyGrid = false;
     let globalOrder = 1;
 
-    let stone = stoneColor === white ? new WhiteStone() : new BlackStone();
+    const stone = stoneColor === white ? new WhiteStone() : new BlackStone();
     for(let i = x-1, n = y-1, order = 1; i >= -1 && n >= -1; i--, n--, order++) {
       if (i === -1 || n === -1) {
         outOfBoard = true;
@@ -146,29 +184,21 @@ window.onload = function() {
           break;
         }
       }
-    };
-    if (!firstSameColor && !outOfBoard && !emptyGrid) {
-      for(let i = 1; i <= globalOrder; i++) {
-        if(stoneColor === black) {
-          matrix[y - i][x - i].innerHTML = black; 
-        } else {
-          matrix[y - i][x - i].innerHTML = white;
-        };
-      };
-      turnCheckCount++;
-    };
+    }
+    let approvalToTurn = isApprovedToTurn(firstSameColor, outOfBoard, emptyGrid);
+    turnStone(approvalToTurn, globalOrder, 'upLeft');
   }
 
   function upRightCheck(grid, matrix, stoneColor){
-    const x = grid.x
-    const y = grid.y 
+    const x = grid.x;
+    const y = grid.y;
 
     let firstSameColor = false;
     let outOfBoard = false;
     let emptyGrid = false;
     let globalOrder = 0;
 
-    let stone = stoneColor === white ? new WhiteStone() : new BlackStone();
+    const stone = stoneColor === white ? new WhiteStone() : new BlackStone();
     for(let i = x+1, n = y-1, order = 1; i <= 8 && n >= -1; i++, n--, order++) {
       if(i === 8 || n === -1) {
         outOfBoard = true;
@@ -190,28 +220,20 @@ window.onload = function() {
         }
       }
     }
-    if (!firstSameColor && !outOfBoard && !emptyGrid) {
-      for(let i = 1; i <= globalOrder; i++) {
-        if(stoneColor === black) {
-          matrix[y - i][x + i].innerHTML = black; 
-        } else {
-          matrix[y - i][x + i].innerHTML = white;
-        };
-      };
-      turnCheckCount++;
-    };
+    let approvalToTurn = isApprovedToTurn(firstSameColor, outOfBoard, emptyGrid);
+    turnStone(approvalToTurn, globalOrder, 'upRight');
   }
 
   function downLeftCheck(grid, matrix, stoneColor){
-    const x = grid.x
-    const y = grid.y 
+    const x = grid.x;
+    const y = grid.y;
 
     let firstSameColor = false;
     let outOfBoard = false;
     let emptyGrid = false;
     let globalOrder = 0;
 
-    let stone = stoneColor === white ? new WhiteStone() : new BlackStone();
+    const stone = stoneColor === white ? new WhiteStone() : new BlackStone();
     for(let i = x-1, n = y+1, order = 1; i >= -1 && n <= 8; i--, n++, order++) {
       if (i === -1 || n === 8) {
         outOfBoard = true;
@@ -233,28 +255,20 @@ window.onload = function() {
         }
       }
     }
-    if (!firstSameColor && !outOfBoard && !emptyGrid) {
-      for(let i = 1; i <= globalOrder; i++) {
-        if(stoneColor === black) {
-          matrix[y + i][x - i].innerHTML = black; 
-        } else {
-          matrix[y + i][x - i].innerHTML = white;
-        }
-      }
-      turnCheckCount++;
-    }
+    let approvalToTurn = isApprovedToTurn(firstSameColor, outOfBoard, emptyGrid);
+    turnStone(approvalToTurn, globalOrder, 'downLeft');
   }
 
   function downRightCheck(grid, matrix, stoneColor){
-    const x = grid.x
-    const y = grid.y 
+    const x = grid.x;
+    const y = grid.y;
 
     let firstSameColor = false;
     let outOfBoard = false;
     let emptyGrid = false;
     let globalOrder = 0;
 
-    let stone = stoneColor === white ? new WhiteStone() : new BlackStone();
+    const stone = stoneColor === white ? new WhiteStone() : new BlackStone();
     for(let i = x+1, n = y+1, order = 1; i <= 8 && n <= 8; i++, n++, order++) {
       if (i === 8 || n === 8) {
         outOfBoard = true;
@@ -275,17 +289,9 @@ window.onload = function() {
           break;
         }
       }
-    };
-    if (!firstSameColor && !outOfBoard && !emptyGrid) {
-      for(let i = 1; i <= globalOrder; i++) {
-        if(stoneColor === black) {
-          matrix[y + i][x + i].innerHTML = black; 
-        } else {
-          matrix[y + i][x + i].innerHTML = white;
-        };
-      };
-      turnCheckCount++;
-    };
+    }
+    let approvalToTurn = isApprovedToTurn(firstSameColor, outOfBoard, emptyGrid);
+    turnStone(approvalToTurn, globalOrder, 'downRight');
   }
 
 
@@ -294,7 +300,7 @@ window.onload = function() {
     let emptyGrid = false;
     let outOfBoard = false;
     let globalOrder = 0;
-    let stone = stoneColor === white ? new WhiteStone() : new BlackStone();
+    const stone = stoneColor === white ? new WhiteStone() : new BlackStone();
     for(let i = x+1, order = 1; i <= 8; i++, order++) {
       if (i === 8) {
         outOfBoard = true;
@@ -315,17 +321,9 @@ window.onload = function() {
           break;
         }
       }
-    };
-    if (!firstSameColor && !outOfBoard && !emptyGrid) {
-      for(let i = 1; i <= globalOrder; i++) {
-        if(stoneColor === black){
-          row[x + i].innerHTML = black;
-        } else {
-          row[x + i].innerHTML = white;
-        }
-      }; 
-      turnCheckCount++;
-    };
+    }
+    let approvalToTurn = isApprovedToTurn(firstSameColor, outOfBoard, emptyGrid);
+    turnStone(approvalToTurn, globalOrder, 'up', row);
   }
 
   function downCheck(row, x, stoneColor) {
@@ -333,7 +331,7 @@ window.onload = function() {
     let emptyGrid = false;
     let outOfBoard = false;
     let globalOrder = 0;
-    let stone = stoneColor === white ? new WhiteStone() : new BlackStone();
+    const stone = stoneColor === white ? new WhiteStone() : new BlackStone();
     for(let i = x-1, order = 1; i >= -1; i--, order++) {
       if (i === -1) {
         outOfBoard = true;
@@ -347,7 +345,6 @@ window.onload = function() {
             break;
           }
         } else if(stone.isOppositeColor(row[i])){
-          row[i].innerHTML = white
           globalOrder++
           continue;
         } else {
@@ -356,16 +353,8 @@ window.onload = function() {
         }
       }
     }
-    if (!firstSameColor && !outOfBoard && !emptyGrid) {
-      for(let i = 1; i <= globalOrder; i++) {
-        if(stoneColor === black){
-          row[x - i].innerHTML = black;
-        } else {
-          row[x - i].innerHTML = white;
-        }
-      }
-      turnCheckCount++;
-    }
+    let approvalToTurn = isApprovedToTurn(firstSameColor, outOfBoard, emptyGrid);
+    turnStone(approvalToTurn, globalOrder, 'down', row);
   }
 
   function transpose(a) {
